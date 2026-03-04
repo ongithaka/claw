@@ -1,0 +1,21 @@
+name: source
+
+on:
+  pull_request:
+    branches: [production]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-source:
+    name: validate source branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: validate branch rules
+        run: |
+          head="${{ github.event.pull_request.head.ref }}"
+          if [ "$head" != "staging" ]; then
+            echo "::error::only the 'staging' branch can be merged into 'production'"
+            exit 1
+          fi
+          echo "::notice::valid source branch: $head > production"

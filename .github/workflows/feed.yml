@@ -1,0 +1,21 @@
+name: feed
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-feed:
+    name: validate feed branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: validate branch rules
+        run: |
+          head="${{ github.event.pull_request.head.ref }}"
+          if [ "$head" != "development" ]; then
+            echo "::error::only the 'development' branch can be merged into 'staging'"
+            exit 1
+          fi
+          echo "::notice::valid feed branch: $head > staging"
